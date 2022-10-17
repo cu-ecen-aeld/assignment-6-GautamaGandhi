@@ -2,11 +2,11 @@
 
 case "$1" in
     start)
-        echo "Starting Modules"
+        echo "Starting Scull"
         /usr/bin/scull_load
         ;;
     stop)
-        echo "Stopping Modules"
+        echo "Stopping Scull"
         /usr/bin/scull_unload
         ;;
     *)

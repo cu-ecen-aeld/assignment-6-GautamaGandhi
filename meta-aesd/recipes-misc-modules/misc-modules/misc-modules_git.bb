@@ -11,7 +11,10 @@
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_URI = "git://git@github.com/cu-ecen-aeld/assignment-7-GautamaGandhi.git;protocol=ssh;branch=master file://misc-start-stop.sh"
+inherit module
+
+SRC_URI = "git://git@github.com/cu-ecen-aeld/assignment-7-GautamaGandhi.git;protocol=ssh;branch=master \
+file://S98lddmodules_misc-start-stop.sh"
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
@@ -19,19 +22,17 @@ SRCREV = "e2083512da6d9fdf24ae68f0f0f613800ed9b725"
 
 S = "${WORKDIR}/git/misc-modules"
 
-inherit module
-
-FILES:${PN} += "${sysconfdir}/*"
-FILES:${PN} += "${bindir}/module_load"
-FILES:${PN} += "${bindir}/module_unload"
-
-EXTRA_OEMAKE:append:task-install = " -C ${STAGING_KERNEL_DIR} M=${S}/misc-modules"
-EXTRA_OEMAKE += "KERNELDIR=${STAGING_KERNEL_DIR}"
 
 
 inherit update-rc.d
 INITSCRIPT_PACKAGES = "${PN}"
-INITSCRIPT_NAME:${PN} = "misc-start-stop.sh"
+INITSCRIPT_NAME:${PN} = "S98lddmodules_misc-start-stop.sh"
+
+FILES:${PN} += "${bindir}/module_load"
+FILES:${PN} += "${bindir}/module_unload"
+FILES:${PN} += "${sysconfdir}/*"
+
+# Test comment
 
 do_configure () {
 	:
@@ -40,6 +41,9 @@ do_configure () {
 do_compile () {
 	oe_runmake
 }
+
+EXTRA_OEMAKE:append:task-install = " -C ${STAGING_KERNEL_DIR} M=${S}/misc-modules"
+EXTRA_OEMAKE += "KERNELDIR=${STAGING_KERNEL_DIR}"
 
 do_install () {
 	# TODO: Install your binaries/scripts here.
@@ -54,7 +58,7 @@ do_install () {
     install -d ${D}${base_libdir}/modules/5.15.68-yocto-standard/
 	install -m 0755 ${S}/module_load ${D}${bindir}/
     install -m 0755 ${S}/module_unload ${D}${bindir}/
-	install -m 0755 ${WORKDIR}/misc-start-stop.sh ${D}${sysconfdir}/init.d
+	install -m 0755 ${WORKDIR}/S98lddmodules_misc-start-stop.sh ${D}${sysconfdir}/init.d
     install -m 0755 ${S}/hello.ko ${D}/${base_libdir}/modules/5.15.68-yocto-standard/
     install -m 0755 ${S}/faulty.ko ${D}/${base_libdir}/modules/5.15.68-yocto-standard/
 }

@@ -12,7 +12,10 @@ LICENSE = "MIT"
 # LIC_FILES_CHKSUM = "file://LICENSE;md5=f098732a73b5f6f3430472f5b094ffdb"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_URI = "git://git@github.com/cu-ecen-aeld/assignment-7-GautamaGandhi.git;protocol=ssh;branch=master file://scull-start-stop.sh"
+inherit module
+
+SRC_URI = "git://git@github.com/cu-ecen-aeld/assignment-7-GautamaGandhi.git;protocol=ssh;branch=master \
+file://S98lddmodules_scull-start-stop.sh"
 
 # Modify these as desired
 PV = "1.0+git${SRCPV}"
@@ -20,19 +23,15 @@ SRCREV = "e2083512da6d9fdf24ae68f0f0f613800ed9b725"
 
 S = "${WORKDIR}/git/scull"
 
-inherit module
+inherit update-rc.d
+INITSCRIPT_PACKAGES = "${PN}"
+INITSCRIPT_NAME:${PN} = "S98lddmodules_scull-start-stop.sh"
 
-FILES:${PN} += "${bindir}/scull"
 FILES:${PN} += "${bindir}/scull_load"
 FILES:${PN} += "${bindir}/scull_unload"
 FILES:${PN} += "${sysconfdir}/*"
 
-EXTRA_OEMAKE:append:task-install = " -C ${STAGING_KERNEL_DIR} M=${S}/scull"
-EXTRA_OEMAKE += "KERNELDIR=${STAGING_KERNEL_DIR}"
-
-inherit update-rc.d
-INITSCRIPT_PACKAGES = "${PN}"
-INITSCRIPT_NAME:${PN} = "scull-start-stop.sh"
+# Test comment
 
 do_configure () {
 	:
@@ -41,6 +40,9 @@ do_configure () {
 do_compile () {
 	oe_runmake
 }
+
+EXTRA_OEMAKE:append:task-install = " -C ${STAGING_KERNEL_DIR} M=${S}/scull"
+EXTRA_OEMAKE += "KERNELDIR=${STAGING_KERNEL_DIR}"
 
 do_install () {
 	# TODO: Install your binaries/scripts here.
@@ -55,7 +57,7 @@ do_install () {
     install -d ${D}${base_libdir}/modules/5.15.68-yocto-standard/
 	install -m 0755 ${S}/scull_load ${D}${bindir}/
     install -m 0755 ${S}/scull_unload ${D}${bindir}/
-	install -m 0755 ${WORKDIR}/scull-start-stop.sh ${D}${sysconfdir}/init.d
+	install -m 0755 ${WORKDIR}/S98lddmodules_scull-start-stop.sh ${D}${sysconfdir}/init.d
     install -m 0755 ${S}/scull.ko ${D}/${base_libdir}/modules/5.15.68-yocto-standard/
 }
 
